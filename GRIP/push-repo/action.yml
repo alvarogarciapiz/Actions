@@ -15,6 +15,7 @@ runs:
     - name: Run Python Stock Updates
       shell: bash
       run: |
+        rm data.json
         pip install --upgrade pip
         pip install pandas
         python stock.py
