@@ -1,0 +1,38 @@
+name: 'Actualiza Stock'
+description: 'Usando un script de python lee un excel de drive para actualizar el stock de la web'
+outputs:
+  files-changed:
+    description: "Files Changed a true si cambió el stock y a false si no ha cambiado"
+    value: ${{ steps.check-data.outputs.files_changed }}
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout del código
+      uses: actions/checkout@v3
+
+    - name: Copiar fichero data.json
+      shell: bash
+      run: |
+        cp data.json olddata.json
+
+    - name: Run Python Stock Updates
+      shell: bash
+      run: |
+        pip install --upgrade pip
+        pip install pandas
+        python stock.py
+
+    - name: Comprobar data
+      shell: bash
+      id: check-data
+      run: |
+        if diff "data.json" "olddata.json" >/dev/null; then
+          echo "files_changed=false" >> $GITHUB_OUTPUT
+        else
+          echo "files_changed=true" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Eliminar olddata
+      shell: bash
+      run: |
+        rm olddata.json
