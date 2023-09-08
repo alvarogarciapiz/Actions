@@ -29,4 +29,4 @@ runs:
         git add *
         git commit -m "Modificación automática del fichero de stock"
         git push
-        sleep 10
+        sleep 45
