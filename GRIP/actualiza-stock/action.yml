@@ -1,5 +1,8 @@
 name: 'Actualiza Stock'
 description: 'Usando un script de python lee un excel de drive para actualizar el stock de la web'
+branding:
+  icon: 'box'
+  color: 'gray-dark'
 outputs:
   files_changed:
     description: "Files Changed a true si cambió el stock y a false si no ha cambiado"
