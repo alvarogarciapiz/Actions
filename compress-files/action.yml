@@ -1,0 +1,54 @@
+name: compress-files
+description: "This action compresses files into zip or tar"
+inputs:
+  ORIGIN_PATH:
+    description: "Path fo the files to compress"
+    required: true
+    type: string
+  NAME:
+    description: "Name of the compressed zip/tar file"
+    required: true
+    type: string
+  EXCLUDED_FILES:
+    description: "Files to exclude"
+    required: false
+    type: string
+  COMPRESSION:
+    description: "tar/zip"
+    type: string
+    required: false
+    default: "zip"
+outputs:
+  FILE_NAME:
+    description: "Name of the compressed file"
+    value: ${{}}
+  FILE_PATH:
+    description: "Path of the generated zip/tar file"
+    value: ${{}}
+runs:
+  using: "composite"
+  steps:
+    - name: Compress files
+      id: compress
+      shell: bash
+      run: |
+        cd ${{ inputs.ORIGIN_PATH }}/..
+        if [[ -z "${{ inputs.NAME }}" ]]; then
+          file_name="$(basename "${{ inputs.ORIGIN_PATH }}").${{ inputs.COMPRESSION }}"
+        else
+          file_name="${{ inputs.NAME }}.${{ inputs.COMPRESSION }}"
+        fi
+        
+        if [[ ${{ inputs.COMPRESSION }} == "tar.gz" ]]; then
+          tar -czf $file_name $(basename "${{ inputs.ORIGIN_PATH }}")
+          echo -e "\n\nFiles successfully compressed in: $file_name"
+
+        elif [[ ${{ inputs.COMPRESSION }} == "zip" ]]; then
+          zip -r $file_name $(basename "${{ inputs.ORIGIN_PATH }}")
+          echo -e "\n\nFiles successfully compressed in: $file_name"
+        else
+          echo "::error:: "COMPRESSION" input must be "zip", "tar" only."
+          exit 1
+        fi
+        echo "FILE_NAME=$file_name" >> $GITHUB_OUTPUT
+        echo "FILE_PATH=$(readlink -f $file_name)" >> $GITHUB_OUTPUT
