@@ -21,10 +21,10 @@ inputs:
 outputs:
   FILE_NAME:
     description: "Name of the compressed file"
-    value: ${{}}
+    value: ${{ steps.compress.outputs.FILE_NAME }}
   FILE_PATH:
     description: "Path of the generated zip/tar file"
-    value: ${{}}
+    value: ${{ steps.compress.outputs.FILE_PATH }}
 runs:
   using: "composite"
   steps:
